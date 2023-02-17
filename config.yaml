@@ -1,0 +1,8 @@
+# AWS Provider Configurations
+aws:
+  # Backend configuration
+  backend_bucket: sample-tfstate
+  backend_lock: sample-tflock
+
+  # Common configuration
+  default_region: ap-northeast-1

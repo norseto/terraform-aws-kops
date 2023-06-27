@@ -134,12 +134,34 @@ locals {
     for a in keys(local.addons) : a => local.addons[a].enabled
   }
 
+  # Common ServiceAccount Policies
+  common_policies = {
+    load_balancer_controller : {
+      name : "aws-load-balancer-controller"
+      template : "${path.module}/templates/aws-load-balancer-controller.json.tftpl"
+      override : "load_balancer_controller"
+    },
+    aws_for_fluent_bit : {
+      name : "aws-for-fluent-bit"
+      template : "${path.module}/templates/aws-for-fluent-bit.json.tftpl"
+    },
+    efs_csi_controller : {
+      name : "efs-csi-controller-sa"
+      template : "${path.module}/templates/aws-efs-csi-driver.json.tftpl"
+    },
+    cluster_autoscaler : {
+      name : "cluster-autoscaler"
+      template : "${path.module}/templates/cluster-autoscaler.json.tftpl"
+      override : "cluster_autoscaler"
+    }
+  }
+
   # IRSA
   discovery_store_id = coalesce(var.discovery_store_id, var.state_store_id)
   discovery_key      = local.state_store_id == local.discovery_store_id ? "${local.cluster_name}/discovery" : local.cluster_name
   discovery          = "s3://${local.discovery_store_id}/${local.discovery_key}"
   service_account_external_permissions = {
-    for p in var.service_account_external_permissions :
+    for p in concat(var.service_account_external_permissions, module.common_sa_policies.policy_list) :
     "${p.namespace}::${p.name}" => {
       name : p.name
       namespace : p.namespace
@@ -162,7 +184,7 @@ locals {
   acc_typ       = local.acc_pat[2] == "user" ? "user" : "role"
   caller_arn    = "arn:aws:iam::${local.acc_pat[1]}:${local.acc_typ}/${local.acc_pat[3]}"
   admin_user    = { arn : local.caller_arn, username : "kops_admin", groups : ["system:masters"] }
-  cluster_users = concat([local.admin_user], var.additional_users)
+  cluster_users = concat([local.admin_user], [for u in var.additional_users : u if u.arn != local.caller_arn])
 
   # Other
   term_handler  = var.node_termination_handler

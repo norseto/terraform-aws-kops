@@ -188,31 +188,37 @@ variable "additional_security_group_ids" {
 variable "service_account_external_permissions" {
   description = "External Policy for ServiceAccount"
   type = list(object({
-    name        = string
-    namespace   = optional(string, "kube-system")
-    override    = optional(string, "")
+    # Name of the ServiceAccount
+    name = string
+    # ServiceAccount namespace
+    namespace = optional(string, "kube-system")
+    # If this entry overrides the SerivceAccount of kOps managed addon, specify addon name
+    override = optional(string, "")
+    # Policy ARNs
     policy_arns = list(string)
   }))
   default = []
 }
 
 variable "addons" {
-  description = "Addons to be installed"
+  description = "kOps managed addons to be installed"
   type = object({
-    # CertManager configuration - It cannot be disabled. So, enabled means managed.
+    # CertManager always need to be installed because this module always set
+    # `service_account_issuer_discovery`. So, if false, it should be installed by helm.
     cert_manager = optional(object(
       {
         enabled = optional(bool, true)
       }
     ), { enabled = true }),
-    # LoadBalancerController configuration
+    # LoadBalancerController - Managed LoadBalancerController needs tags on subnet,
+    # so this module does not install by default.
     load_balancer_controller = optional(object(
       {
         # True will install addon with kOps
         enabled = optional(bool, false)
       }
     ), { enabled : false })
-    # ClusterAutoscale Configuration
+    # ClusterAutoscaler Configuration
     cluster_autoscaler = optional(object(
       {
         # True will install addon with kOps
@@ -224,7 +230,7 @@ variable "addons" {
         # Skip node with local storage
         skip_nodes_with_local_storage = optional(bool, false)
       }
-    ), { enabled : false })
+    ), { enabled : true })
   })
   default = {
     load_balancer_controller : { enabled : false }
@@ -269,13 +275,16 @@ variable "ssm_agent" {
 }
 
 variable "eksd_config" {
-  description = "EKS-D configuration"
+  description = <<_EOM
+    EKS-D configuration. To make configuration, go https://distro.eks.amazonaws.com/ , then select version
+    and download release manifest. Then run tools/eks-d-mkconf.sh. 
+  _EOM
   type        = map(any)
   default     = {}
 }
 
 variable "additional_users" {
-  description = "Additional users"
+  description = "Additional users or roles"
   type = list(object({
     arn      = string
     username = string
@@ -307,4 +316,15 @@ variable "node_problem_detector" {
   description = "Whether enable Node Problem Detector or not"
   type        = bool
   default     = false
+}
+
+variable "common_policy_installation" {
+  description = "Install common AWS policies for Kubernetes"
+  type = object({
+    load_balancer_controller = optional(bool, true)
+    aws_for_fluent_bit       = optional(bool, true)
+    efs_csi_controller       = optional(bool, true)
+    cluster_autoscaler       = optional(bool, true)
+  })
+  default = {}
 }

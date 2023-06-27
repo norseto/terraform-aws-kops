@@ -228,7 +228,8 @@ resource "kops_cluster" "cluster" {
 
   lifecycle {
     ignore_changes = [
-      secrets
+      secrets,
+      authentication[0].aws[0].identity_mappings[0]
     ]
   }
 }

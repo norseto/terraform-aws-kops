@@ -46,6 +46,11 @@ resource "kops_instance_group" "nodes" {
     }
   }
 
+  root_volume_type       = each.value.root_volume.volume_type
+  root_volume_iops       = each.value.root_volume.volume_iops
+  root_volume_throughput = each.value.root_volume.volume_throughput
+  root_volume_size       = each.value.root_volume.volume_size
+
   lifecycle {
     ignore_changes = [labels]
   }

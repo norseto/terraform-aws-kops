@@ -41,6 +41,11 @@ resource "kops_instance_group" "masters" {
     }
   }
 
+  root_volume_type       = local.c_config.root_volume.volume_type
+  root_volume_iops       = local.c_config.root_volume.volume_iops
+  root_volume_throughput = local.c_config.root_volume.volume_throughput
+  root_volume_size       = local.c_config.root_volume.volume_size
+
   lifecycle {
     ignore_changes = [labels]
   }

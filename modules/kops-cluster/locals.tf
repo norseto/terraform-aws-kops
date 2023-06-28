@@ -10,7 +10,6 @@ locals {
 
   # Security
   kubernetes_api_access           = var.kubernetes_api_access
-  ssh_access                      = var.ssh_access
   additional_security_group_ids   = var.additional_security_group_ids
   c_additional_security_group_ids = local.c_config.additional_security_group_ids
 
@@ -185,6 +184,9 @@ locals {
   caller_arn    = "arn:aws:iam::${local.acc_pat[1]}:${local.acc_typ}/${local.acc_pat[3]}"
   admin_user    = { arn : local.caller_arn, username : "kops_admin", groups : ["system:masters"] }
   cluster_users = concat([local.admin_user], [for u in var.additional_users : u if u.arn != local.caller_arn])
+
+  # Etcd
+  etcd_config = var.etcd_volume_config
 
   # Other
   term_handler  = var.node_termination_handler

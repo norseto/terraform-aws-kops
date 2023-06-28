@@ -128,6 +128,7 @@ variable "load_balancer_subnet_filter" {
 }
 
 variable "control_plane_config" {
+  description = "Control plane configurations"
   type = object({
     # Control plane allocation configuration.
     # One Autoscaling Group is created per control plane, so this setting
@@ -147,6 +148,12 @@ variable "control_plane_config" {
     # If empty, will use the same value as the control_plane_arrangement
     on_demand_base = optional(list(number), [])
     instances      = optional(list(list(string)), [])
+    root_volume = optional(object({
+      volume_type       = optional(string)
+      volume_iops       = optional(number)
+      volume_throughput = optional(number)
+      volume_size       = optional(number)
+    }), {})
   })
   default = {}
 }
@@ -165,12 +172,6 @@ variable "state_store_id" {
 variable "discovery_store_id" {
   description = "OIDC discovery S3 bucket ID"
   type        = string
-}
-
-variable "ssh_access" {
-  description = "SSH access CIDR"
-  type        = list(string)
-  default     = ["0.0.0.0/0"]
 }
 
 variable "kubernetes_api_access" {
@@ -239,7 +240,7 @@ variable "addons" {
 }
 
 variable "tag_subnets" {
-  description = "tag subenets"
+  description = "Whether tag subenets or not"
   type        = bool
   default     = false
 }
@@ -259,11 +260,20 @@ variable "nodes" {
     on_demand_base                = optional(number, null)
     on_demand_above_base          = optional(number, null)
     additional_security_group_ids = optional(list(string), [])
+    root_volume = optional(object({
+      volume_type       = optional(string)
+      volume_iops       = optional(number)
+      volume_throughput = optional(number)
+      volume_size       = optional(number)
+    }), {})
   }))
 }
 
 variable "ssm_agent" {
-  description = "Install SSM Agent"
+  description = <<_EOM
+  Whether install SSM Agent or not. Because this module does not set
+  SSH access configuration, If you want to login to nodes, set true.
+  _EOM
   type = object({
     control_plane = optional(bool, false)
     node          = optional(bool, false)
@@ -325,6 +335,16 @@ variable "common_policy_installation" {
     aws_for_fluent_bit       = optional(bool, true)
     efs_csi_controller       = optional(bool, true)
     cluster_autoscaler       = optional(bool, true)
+  })
+  default = {}
+}
+
+variable "etcd_volume_config" {
+  type = object({
+    volume_type       = optional(string)
+    volume_iops       = optional(number)
+    volume_throughput = optional(number)
+    volume_size       = optional(number)
   })
   default = {}
 }

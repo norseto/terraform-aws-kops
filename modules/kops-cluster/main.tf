@@ -72,7 +72,7 @@ resource "kops_cluster" "cluster" {
     amazon_vpc {}
   }
 
-  ssh_access            = local.ssh_access
+  ssh_access            = []
   kubernetes_api_access = local.kubernetes_api_access
 
   kubelet {
@@ -174,9 +174,13 @@ resource "kops_cluster" "cluster" {
     dynamic "member" {
       for_each = local.c_groups
       content {
-        name             = member.value.etcd_name
-        instance_group   = member.value.instance_group
-        encrypted_volume = true
+        name              = member.value.etcd_name
+        instance_group    = member.value.instance_group
+        volume_type       = local.etcd_config.volume_type
+        volume_iops       = local.etcd_config.volume_iops
+        volume_size       = local.etcd_config.volume_size
+        volume_throughput = local.etcd_config.volume_throughput
+        encrypted_volume  = true
       }
     }
   }
@@ -189,9 +193,13 @@ resource "kops_cluster" "cluster" {
     dynamic "member" {
       for_each = local.c_groups
       content {
-        name             = member.value.etcd_name
-        instance_group   = member.value.instance_group
-        encrypted_volume = true
+        name              = member.value.etcd_name
+        instance_group    = member.value.instance_group
+        volume_type       = local.etcd_config.volume_type
+        volume_iops       = local.etcd_config.volume_iops
+        volume_size       = local.etcd_config.volume_size
+        volume_throughput = local.etcd_config.volume_throughput
+        encrypted_volume  = true
       }
     }
   }

@@ -206,6 +206,7 @@ variable "addons" {
   type = object({
     # CertManager always need to be installed because this module always set
     # `service_account_issuer_discovery`. So, if false, it should be installed by helm.
+    # This is for testing cert-manager version testing purpose.
     cert_manager = optional(object(
       {
         enabled = optional(bool, true)
@@ -340,6 +341,7 @@ variable "common_policy_installation" {
 }
 
 variable "etcd_volume_config" {
+  description = "Etcd volume configurations"
   type = object({
     volume_type       = optional(string)
     volume_iops       = optional(number)

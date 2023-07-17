@@ -11,3 +11,6 @@ Common ServiceAccount IAM Policies
 ## v0.3.0
 - Remove SSH access
 - Add storage volume configurations
+
+## v0.4.0
+- Add kops-workload for common workloads

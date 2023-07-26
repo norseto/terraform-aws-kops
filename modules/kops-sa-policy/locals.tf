@@ -1,4 +1,4 @@
 locals {
-  cluster_name = var.cluster_name
+  cluster_name = "${var.prefix}${var.cluster_name}"
   policies     = var.policies
 }

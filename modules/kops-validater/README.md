@@ -4,13 +4,13 @@ kOps cluster validater.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_kops"></a> [kops](#requirement\_kops) | 1.25.3 |
+| <a name="requirement_kops"></a> [kops](#requirement\_kops) | ~> 1.25.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_kops"></a> [kops](#provider\_kops) | 1.25.3 |
+| <a name="provider_kops"></a> [kops](#provider\_kops) | ~> 1.25.0 |
 
 ## Modules
 
@@ -20,7 +20,7 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [kops_cluster_updater.validate](https://registry.terraform.io/providers/eddycharly/kops/1.25.3/docs/resources/cluster_updater) | resource |
+| [kops_cluster_updater.validate](https://registry.terraform.io/providers/eddycharly/kops/latest/docs/resources/cluster_updater) | resource |
 
 ## Inputs
 

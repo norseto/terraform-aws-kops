@@ -38,6 +38,16 @@ variable "installation" {
       version = optional(string, "")
       set     = optional(map(string), {})
     }), {})
+    patch_autoscaler = optional(object({
+      # Patches spot-worker node affinity to control-plane
+      install = optional(bool, false)
+    }), {})
   })
   default = {}
+}
+
+variable "kubeconfig_raw" {
+  description = "Kubeconfig raw content."
+  type        = string
+  default     = ""
 }

@@ -54,3 +54,14 @@ module "fluent_bit" {
 
   depends_on = [module.cert_manager]
 }
+
+module "autoscaler" {
+  source = "./cluster_autoscaler"
+
+  create = {
+    install        = local.install.patch_autoscaler
+    kubeconfig_raw = var.kubeconfig_raw
+  }
+
+  depends_on = [module.cert_manager]
+}

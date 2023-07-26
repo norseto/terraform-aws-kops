@@ -3,6 +3,12 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "prefix" {
+  description = "The prefix of name of the cluster"
+  type        = string
+  default     = ""
+}
+
 variable "policies" {
   description = "policies to create"
   # Key: will be used as a part on policy name

@@ -2,7 +2,8 @@
 module "common_sa_policies" {
   source = "../kops-sa-policy"
 
-  cluster_name = local.cluster_name
+  cluster_name = var.cluster_name
+  prefix       = var.prefix
   policies = {
     for k, p in local.common_policies : replace(k, "_", "-") => merge(p,
     { policy : templatefile(p.template, { cluster_name : local.cluster_name }) })

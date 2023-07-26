@@ -4,13 +4,13 @@ Kubeconfig utility.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_kops"></a> [kops](#requirement\_kops) | >= 1.25.3 |
+| <a name="requirement_kops"></a> [kops](#requirement\_kops) | ~> 1.25.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_kops"></a> [kops](#provider\_kops) | >= 1.25.3 |
+| <a name="provider_kops"></a> [kops](#provider\_kops) | ~> 1.25.0 |
 
 ## Modules
 

@@ -22,3 +22,7 @@ Common ServiceAccount IAM Policies
 
 ## v0.5.0
 - Change module provider version constraints because of breaking changes on provider
+
+## v0.5.1
+- Combine validater into updater.
+- Add cloud-controller-manager-image to tool.

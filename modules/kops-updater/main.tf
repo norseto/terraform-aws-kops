@@ -7,22 +7,63 @@
  * All node is spot instance| ClusterAutoscaler won't start on spot incences.
  * Only one worker node| Some workloads need to be deployed on 2 nodes
  */
-resource "kops_cluster_updater" "updater" {
+resource "kops_cluster_updater" "update" {
   cluster_name = var.cluster_name
 
   apply {
-  }
-  validate {
-    skip = true
+    skip                 = false
+    allow_kops_downgrade = true
   }
   rolling_update {
+    skip = true
+  }
+  validate {
     skip = true
   }
 
   keepers = var.keepers
 }
 
+resource "kops_cluster_updater" "rolling_update" {
+  cluster_name = var.cluster_name
+
+  apply {
+    skip = true
+  }
+  rolling_update {
+    skip = local.new_cluster
+  }
+  validate {
+    skip = true
+  }
+
+  keepers    = var.keepers
+  depends_on = [kops_cluster_updater.update]
+}
+
+resource "kops_cluster_updater" "validate" {
+  count = var.validate ? 1 : 0
+
+  cluster_name = var.cluster_name
+
+  apply {
+    skip = true
+  }
+  rolling_update {
+    skip = true
+  }
+  validate {
+    skip    = false
+    timeout = var.timeout
+  }
+
+  keepers    = var.keepers
+  depends_on = [kops_cluster_updater.rolling_update]
+}
+
 resource "null_resource" "kubeconfig" {
+  count = var.export_kubeconfig ? 1 : 0
+
   triggers = {
     always_run = "${timestamp()}"
   }
@@ -31,7 +72,7 @@ resource "null_resource" "kubeconfig" {
     command = "kops export kubeconfig --name '${var.cluster_name}' --state 's3://${var.state_store_id}' --admin=26280h"
   }
   depends_on = [
-    kops_cluster_updater.updater
+    kops_cluster_updater.update
   ]
 }
 
@@ -39,5 +80,7 @@ module "kube_config" {
   source = "../kops-kubeconfig"
 
   cluster_name = var.cluster_name
-  depends_on   = [kops_cluster_updater.updater]
+  depends_on = [
+    kops_cluster_updater.update
+  ]
 }

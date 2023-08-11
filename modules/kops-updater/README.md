@@ -29,7 +29,9 @@ Only one worker node| Some workloads need to be deployed on 2 nodes
 
 | Name | Type |
 |------|------|
-| [kops_cluster_updater.updater](https://registry.terraform.io/providers/eddycharly/kops/latest/docs/resources/cluster_updater) | resource |
+| [kops_cluster_updater.rolling_update](https://registry.terraform.io/providers/eddycharly/kops/1.26.0-alpha.1/docs/resources/cluster_updater) | resource |
+| [kops_cluster_updater.update](https://registry.terraform.io/providers/eddycharly/kops/1.26.0-alpha.1/docs/resources/cluster_updater) | resource |
+| [kops_cluster_updater.validate](https://registry.terraform.io/providers/eddycharly/kops/1.26.0-alpha.1/docs/resources/cluster_updater) | resource |
 | [null_resource.kubeconfig](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 
 ## Inputs
@@ -37,9 +39,12 @@ Only one worker node| Some workloads need to be deployed on 2 nodes
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The name of the cluster | `string` | n/a | yes |
+| <a name="input_export_kubeconfig"></a> [export\_kubeconfig](#input\_export\_kubeconfig) | Exports kubeconfig file | `bool` | `true` | no |
 | <a name="input_keepers"></a> [keepers](#input\_keepers) | Keepers | `map(number)` | `{}` | no |
 | <a name="input_output_kubeconfig_raw"></a> [output\_kubeconfig\_raw](#input\_output\_kubeconfig\_raw) | True if you want raw kubeconfig output. | `bool` | `false` | no |
 | <a name="input_state_store_id"></a> [state\_store\_id](#input\_state\_store\_id) | State store S3 bucket ID | `string` | n/a | yes |
+| <a name="input_timeout"></a> [timeout](#input\_timeout) | Validate update timeout | `string` | `"10m"` | no |
+| <a name="input_validate"></a> [validate](#input\_validate) | True if validation | `bool` | `false` | no |
 
 ## Outputs
 

@@ -45,6 +45,10 @@ resource "kops_cluster" "cluster" {
     aws {}
   }
 
+  external_cloud_controller_manager {
+    image = try(local.eksd["cloud-controller-manager-image"], "")
+  }
+
   cloud_config {
     aws_ebs_csi_driver {
       enabled = true

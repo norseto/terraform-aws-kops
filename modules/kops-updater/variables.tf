@@ -19,3 +19,21 @@ variable "output_kubeconfig_raw" {
   type        = bool
   default     = false
 }
+
+variable "export_kubeconfig" {
+  description = "Exports kubeconfig file"
+  type        = bool
+  default     = true
+}
+
+variable "validate" {
+  description = "True if validation"
+  type        = bool
+  default     = false
+}
+
+variable "timeout" {
+  description = "Validate update timeout"
+  type        = string
+  default     = "10m"
+}

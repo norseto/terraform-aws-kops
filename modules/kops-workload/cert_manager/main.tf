@@ -26,6 +26,21 @@ resource "helm_release" "this" {
     value = "kops"
   }
 
+  set {
+    name  = "startupapicheck.podLabels.kops\\.k8s\\.io/managed-by"
+    value = "kops"
+  }
+
+  set {
+    name  = "webhook.podLabels.kops\\.k8s\\.io/managed-by"
+    value = "kops"
+  }
+
+  set {
+    name  = "cainjector.podLabels.kops\\.k8s\\.io/managed-by"
+    value = "kops"
+  }
+
   dynamic "set" {
     for_each = local.set_values
     content {

@@ -26,3 +26,6 @@ Common ServiceAccount IAM Policies
 ## v0.5.1
 - Combine validater into updater.
 - Add cloud-controller-manager-image to tool.
+
+## v0.5.2
+- Fix worloads bug.

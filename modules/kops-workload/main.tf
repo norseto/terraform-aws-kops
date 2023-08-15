@@ -59,7 +59,7 @@ module "autoscaler" {
   source = "./cluster_autoscaler"
 
   create = {
-    install        = local.install.patch_autoscaler
+    install        = local.install.patch_autoscaler.install
     kubeconfig_raw = var.kubeconfig_raw
   }
 

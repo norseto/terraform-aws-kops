@@ -1,3 +1,10 @@
+module "cp_machine_type" {
+  source = "../modules/kops-machine-type"
+
+  for_each       = local.c_groups
+  instance_types = each.value.instances
+}
+
 resource "kops_instance_group" "masters" {
   for_each = local.c_groups
 
@@ -22,8 +29,8 @@ resource "kops_instance_group" "masters" {
       value = 0
     }
   }
-  max_price    = "0.99"
-  machine_type = "t3a.small"
+  machine_type = module.cp_machine_type[each.key].machine_type
+  max_price    = local.alloc.max_price
   cpu_credits  = local.alloc.cpu_credits
 
   additional_security_groups = local.c_additional_security_group_ids

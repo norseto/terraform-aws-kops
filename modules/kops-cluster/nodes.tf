@@ -1,3 +1,10 @@
+module "node_machine_type" {
+  source = "../modules/kops-machine-type"
+
+  for_each       = { for n in local.nodes : n.name => n }
+  instance_types = each.value.instances
+}
+
 resource "kops_instance_group" "nodes" {
   for_each = { for n in local.nodes : n.name => n }
 
@@ -23,7 +30,7 @@ resource "kops_instance_group" "nodes" {
   max_price = each.value.max_price
 
   cpu_credits  = each.value.cpu_credits
-  machine_type = "t3a.small"
+  machine_type = module.node_machine_type[each.key].machine_type
 
   subnets = [for s in local.n_subnets : s.name]
   additional_security_groups = concat(

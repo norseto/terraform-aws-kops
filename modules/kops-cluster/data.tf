@@ -5,7 +5,7 @@ data "aws_vpc" "vpc" {
 data "aws_caller_identity" "current" {}
 
 module "subnet_data" {
-  source = "../subnet-data"
+  source = "../modules/kops-subnet-data"
 
   vpc_id = local.vpc_id
 }

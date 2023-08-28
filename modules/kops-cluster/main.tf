@@ -224,10 +224,10 @@ resource "kops_cluster" "cluster" {
     enabled = try(local.addons.load_balancer_controller.enabled, false)
   }
   cluster_autoscaler {
-    enabled                       = try(local.addons.cluster_autoscaler.enabled, false)
+    enabled                       = try(local.addons.cluster_autoscaler.enabled, false) && length(try(local.addons.cluster_autoscaler.image, "")) > 0
     skip_nodes_with_system_pods   = try(local.addons.cluster_autoscaler.skip_nodes_with_system_pods, false)
     skip_nodes_with_local_storage = try(local.addons.cluster_autoscaler.skip_nodes_with_local_storage, true)
-    image                         = local.addons.cluster_autoscaler.image
+    image                         = try(local.addons.cluster_autoscaler.image, "")
   }
 
   dynamic "external_policies" {

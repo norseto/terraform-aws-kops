@@ -77,7 +77,7 @@ resource "null_resource" "kubeconfig" {
 }
 
 module "kube_config" {
-  source = "../kops-kubeconfig"
+  source = "../modules/kops-kubeconfig"
 
   cluster_name = var.cluster_name
   depends_on = [

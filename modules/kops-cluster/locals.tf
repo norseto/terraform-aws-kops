@@ -128,7 +128,7 @@ locals {
   state_store_id     = var.state_store_id
   kubernetes_version = var.kubernetes_version
 
-  addons = var.addons
+  addons = var.addons == null ? {} : var.addons
   addon_install = {
     for a in keys(local.addons) : a => local.addons[a].enabled
   }

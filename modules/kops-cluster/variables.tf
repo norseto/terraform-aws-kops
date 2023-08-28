@@ -139,6 +139,7 @@ variable "control_plane_config" {
       cpu_credits              = optional(string, "standard")
       on_demand_base           = optional(number, 1)
       spot_allocation_strategy = optional(string, "lowest-price")
+      max_price                = optional(string, "0.99")
     }), {})
     # the number of control plane instance group in control_plane_subnet
     arrangement = optional(list(number), [1])

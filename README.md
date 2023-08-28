@@ -28,4 +28,7 @@ Common ServiceAccount IAM Policies
 - Add cloud-controller-manager-image to tool.
 
 ## v0.5.2
-- Fix worloads bug.
+- Fix workloads bug.
+
+## v0.5.3
+- Add support Arm64

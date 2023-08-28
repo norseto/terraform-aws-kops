@@ -23,15 +23,15 @@ Only one worker node| Some workloads need to be deployed on 2 nodes
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_kube_config"></a> [kube\_config](#module\_kube\_config) | ../kops-kubeconfig | n/a |
+| <a name="module_kube_config"></a> [kube\_config](#module\_kube\_config) | ../modules/kops-kubeconfig | n/a |
 
 ## Resources
 
 | Name | Type |
 |------|------|
-| [kops_cluster_updater.rolling_update](https://registry.terraform.io/providers/eddycharly/kops/1.26.0-alpha.1/docs/resources/cluster_updater) | resource |
-| [kops_cluster_updater.update](https://registry.terraform.io/providers/eddycharly/kops/1.26.0-alpha.1/docs/resources/cluster_updater) | resource |
-| [kops_cluster_updater.validate](https://registry.terraform.io/providers/eddycharly/kops/1.26.0-alpha.1/docs/resources/cluster_updater) | resource |
+| [kops_cluster_updater.rolling_update](https://registry.terraform.io/providers/eddycharly/kops/latest/docs/resources/cluster_updater) | resource |
+| [kops_cluster_updater.update](https://registry.terraform.io/providers/eddycharly/kops/latest/docs/resources/cluster_updater) | resource |
+| [kops_cluster_updater.validate](https://registry.terraform.io/providers/eddycharly/kops/latest/docs/resources/cluster_updater) | resource |
 | [null_resource.kubeconfig](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 
 ## Inputs

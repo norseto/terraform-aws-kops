@@ -32,3 +32,10 @@ Common ServiceAccount IAM Policies
 
 ## v0.5.3
 - Add support Arm64
+
+## v0.5.4
+- Add support Karpenter
+- Selectable networking(Not all)
+- EBS-CSI-Driver option
+- Add machine_image option, for workaround for amazon vpc networking on 1.27
+- [Breaking Change] Changed internal control-plane resource name

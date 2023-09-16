@@ -14,7 +14,7 @@ locals {
   c_additional_security_group_ids = local.c_config.additional_security_group_ids
 
   # Subnets
-  tag_subnets = var.tag_subnets
+  tag_subnets = var.tag_subnets || local.karpenter
   subnet_ids  = var.subnet_ids
   c_filter    = var.control_plane_subnet_filter
   n_filter    = var.node_subnet_filter
@@ -155,12 +155,24 @@ locals {
     }
   }
 
+  # EBS-CSI-Driver config
+  ebs_csi            = var.ebs_csi_driver
+  ebs_driver_enabled = (local.ebs_csi.enabled && (!local.ebs_csi.self_managed))
+  # When enabled but not kOps managed, we need to add permission.
+  ebs_need_permission = local.ebs_csi.enabled && local.ebs_csi.self_managed
+  ebs_sa_permission = {
+    name : "ebs-csi-controller-sa"
+    namespace : "kube-system"
+    policy_arns : ["arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"]
+  }
+
   # IRSA
   discovery_store_id = coalesce(var.discovery_store_id, var.state_store_id)
   discovery_key      = local.state_store_id == local.discovery_store_id ? "${local.cluster_name}/discovery" : local.cluster_name
   discovery          = "s3://${local.discovery_store_id}/${local.discovery_key}"
   service_account_external_permissions = {
-    for p in concat(var.service_account_external_permissions, module.common_sa_policies.policy_list) :
+    for p in concat(var.service_account_external_permissions, module.common_sa_policies.policy_list,
+    local.ebs_need_permission ? [local.ebs_sa_permission] : []) :
     "${p.namespace}::${p.name}" => {
       name : p.name
       namespace : p.namespace
@@ -189,7 +201,31 @@ locals {
   etcd_config = var.etcd_volume_config
 
   # Other
-  term_handler  = var.node_termination_handler
-  prob_detector = var.node_problem_detector
+  term_handler   = var.node_termination_handler
+  prob_detector  = var.node_problem_detector
+  karpenter      = var.karpenter
+  custom_manager = local.karpenter
+  networking     = lower(var.networking)
+  image_map = var.aws_vpc_workaround ? {
+    amazon_vpc : "ubuntu/images/*/ubuntu-focal-20.04-*"
+  } : {}
 
+  image_filter = try(coalesce(var.machine_image.filter, local.image_map[local.networking]), "")
+  image_owners = var.machine_image.owners
+}
+
+output "ebs_csi_driver" {
+  value = local.ebs_csi
+}
+
+output "service_account_external_permissions" {
+  value = local.service_account_external_permissions
+}
+
+output "ebs_need_permission" {
+  value = local.ebs_need_permission
+}
+
+output "driver_enabled" {
+  value = local.ebs_driver_enabled
 }

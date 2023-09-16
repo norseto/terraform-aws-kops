@@ -227,13 +227,13 @@ variable "addons" {
         # True will install addon with kOps
         enabled = optional(bool, false)
         # Image
-        image = optional(string)
+        image = optional(string, "")
         # Skip node with system pods
         skip_nodes_with_system_pods = optional(bool, true)
         # Skip node with local storage
         skip_nodes_with_local_storage = optional(bool, false)
       }
-    ), { enabled : true })
+    ), { enabled : false })
   })
   default = {
     load_balancer_controller : { enabled : false }
@@ -242,7 +242,7 @@ variable "addons" {
 }
 
 variable "tag_subnets" {
-  description = "Whether tag subenets or not"
+  description = "Whether tag subenets or not. If karpenter is true, will be set to true."
   type        = bool
   default     = false
 }
@@ -252,6 +252,7 @@ variable "nodes" {
   default     = []
   type = list(object({
     name                          = optional(string)
+    manager                       = optional(string, "")
     min_size                      = optional(number, 1)
     max_size                      = optional(number, 3)
     instances                     = optional(list(string), ["t3a.medium", "t3.medium"])
@@ -261,6 +262,7 @@ variable "nodes" {
     node_labels                   = optional(map(string), {})
     on_demand_base                = optional(number, null)
     on_demand_above_base          = optional(number, null)
+    spot_allocation_strategy      = optional(string, "price-capacity-optimized")
     additional_security_group_ids = optional(list(string), [])
     root_volume = optional(object({
       volume_type       = optional(string)
@@ -269,6 +271,10 @@ variable "nodes" {
       volume_size       = optional(number)
     }), {})
   }))
+  validation {
+    condition     = length([for m in compact([for n in var.nodes : lower(n.manager)]) : m if m != "karpenter"]) < 1
+    error_message = "nodes.*.manager should be empty or 'karpenter'"
+  }
 }
 
 variable "ssm_agent" {
@@ -349,5 +355,50 @@ variable "etcd_volume_config" {
     volume_throughput = optional(number)
     volume_size       = optional(number)
   })
+  default = {}
+}
+
+variable "karpenter" {
+  description = "Enable Karpenter"
+  type        = bool
+  default     = false
+}
+
+variable "aws_vpc_workaround" {
+  description = "amazon_vpc workaround"
+  default     = true
+  type        = bool
+}
+
+variable "networking" {
+  description = "Netwoking driver"
+  type        = string
+  default     = "amazon_vpc"
+  validation {
+    condition     = contains(["amazon_vpc", "calico", "cilium", "canal"], lower(var.networking))
+    error_message = "networking should be one of 'amazon_vpc', 'calico', 'cilium' or 'canal'"
+  }
+}
+
+variable "machine_image" {
+  description = "AMI image configuration. currently, control-plane and node are both use this filter"
+  type = object({
+    owners = optional(list(string), [])
+    filter = optional(string, "")
+  })
+  default = {}
+}
+
+# EBS-CSI-Driver
+variable "ebs_csi_driver" {
+  description = "EBS-CSI-Driver configuration"
+  type = object(
+    {
+      # Use EBS-CSI-Driver
+      enabled = optional(bool, true)
+      # Self Managed EBS-CSI-Driver(Only setup IRSA)
+      self_managed = optional(bool, false)
+    }
+  )
   default = {}
 }

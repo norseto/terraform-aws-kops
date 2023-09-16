@@ -5,7 +5,16 @@ module "cp_machine_type" {
   instance_types = each.value.instances
 }
 
-resource "kops_instance_group" "masters" {
+module "cp_machine_image" {
+  source = "../modules/kops-ami"
+
+  for_each       = local.c_groups
+  name_filter    = local.image_filter
+  owners         = local.image_owners
+  instance_types = each.value.instances
+}
+
+resource "kops_instance_group" "control_planes" {
   for_each = local.c_groups
 
   cluster_name = kops_cluster.cluster.name
@@ -30,6 +39,7 @@ resource "kops_instance_group" "masters" {
     }
   }
   machine_type = module.cp_machine_type[each.key].machine_type
+  image        = module.cp_machine_image[each.key].image_full_name
   max_price    = local.alloc.max_price
   cpu_credits  = local.alloc.cpu_credits
 
@@ -43,7 +53,7 @@ resource "kops_instance_group" "masters" {
       content = <<_EOM
         #!/bin/sh
         sudo snap install amazon-ssm-agent --classic
-        sudo snap start amazon-ssm-agent}
+        sudo snap start amazon-ssm-agent
       _EOM
     }
   }

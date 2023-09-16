@@ -51,8 +51,8 @@ resource "kops_cluster" "cluster" {
 
   cloud_config {
     aws_ebs_csi_driver {
-      enabled = true
-      managed = true
+      enabled = local.ebs_driver_enabled
+      managed = local.ebs_driver_enabled
     }
   }
 
@@ -73,7 +73,25 @@ resource "kops_cluster" "cluster" {
   }
 
   networking {
-    amazon_vpc {}
+    dynamic "amazon_vpc" {
+      for_each = setintersection([local.networking], ["amazon_vpc"])
+      content {}
+    }
+    dynamic "cilium" {
+      for_each = setintersection([local.networking], ["cilium"])
+      content {
+        enable_remote_node_identity = true
+        preallocate_bpf_maps        = true
+      }
+    }
+    dynamic "calico" {
+      for_each = setintersection([local.networking], ["calico"])
+      content {}
+    }
+    dynamic "canal" {
+      for_each = setintersection([local.networking], ["canal"])
+      content {}
+    }
   }
 
   ssh_access            = []
@@ -208,6 +226,10 @@ resource "kops_cluster" "cluster" {
     }
   }
 
+  karpenter {
+    enabled = local.karpenter
+  }
+
   metrics_server {
     enabled  = true
     insecure = true
@@ -224,7 +246,7 @@ resource "kops_cluster" "cluster" {
     enabled = try(local.addons.load_balancer_controller.enabled, false)
   }
   cluster_autoscaler {
-    enabled                       = try(local.addons.cluster_autoscaler.enabled, false) && length(try(local.addons.cluster_autoscaler.image, "")) > 0
+    enabled                       = !local.karpenter && try(local.addons.cluster_autoscaler.enabled, false)
     skip_nodes_with_system_pods   = try(local.addons.cluster_autoscaler.skip_nodes_with_system_pods, false)
     skip_nodes_with_local_storage = try(local.addons.cluster_autoscaler.skip_nodes_with_local_storage, true)
     image                         = try(local.addons.cluster_autoscaler.image, "")

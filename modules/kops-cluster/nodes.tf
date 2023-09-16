@@ -5,6 +5,15 @@ module "node_machine_type" {
   instance_types = each.value.instances
 }
 
+module "node_machine_image" {
+  source = "../modules/kops-ami"
+
+  for_each       = { for n in local.nodes : n.name => n }
+  name_filter    = local.image_filter
+  owners         = local.image_owners
+  instance_types = each.value.instances
+}
+
 resource "kops_instance_group" "nodes" {
   for_each = { for n in local.nodes : n.name => n }
 
@@ -29,8 +38,10 @@ resource "kops_instance_group" "nodes" {
   }
   max_price = each.value.max_price
 
+  manager      = local.custom_manager ? title(each.value.manager) : ""
   cpu_credits  = each.value.cpu_credits
   machine_type = module.node_machine_type[each.key].machine_type
+  image        = module.node_machine_image[each.key].image_full_name
 
   subnets = [for s in local.n_subnets : s.name]
   additional_security_groups = concat(
@@ -48,7 +59,7 @@ resource "kops_instance_group" "nodes" {
       content = <<_EOM
         #!/bin/sh
         sudo snap install amazon-ssm-agent --classic
-        sudo snap start amazon-ssm-agent}
+        sudo snap start amazon-ssm-agent
       _EOM
     }
   }

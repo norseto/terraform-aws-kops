@@ -12,7 +12,7 @@ output "revisions" {
   description = "revision map for updater"
   value = merge(
     { cluster : kops_cluster.cluster.revision },
-    { for k, n in merge(kops_instance_group.nodes, kops_instance_group.masters) : k => n.revision }
+    { for k, n in merge(kops_instance_group.nodes, kops_instance_group.control_planes) : k => n.revision }
   )
 }
 

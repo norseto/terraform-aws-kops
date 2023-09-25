@@ -39,3 +39,6 @@ Common ServiceAccount IAM Policies
 - EBS-CSI-Driver option
 - Add machine_image option, for workaround for amazon vpc networking on 1.27
 - [Breaking Change] Changed internal control-plane resource name
+
+## v0.5.5
+- Remove debug outputs

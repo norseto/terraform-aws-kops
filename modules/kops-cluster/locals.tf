@@ -213,19 +213,3 @@ locals {
   image_filter = try(coalesce(var.machine_image.filter, local.image_map[local.networking]), "")
   image_owners = var.machine_image.owners
 }
-
-output "ebs_csi_driver" {
-  value = local.ebs_csi
-}
-
-output "service_account_external_permissions" {
-  value = local.service_account_external_permissions
-}
-
-output "ebs_need_permission" {
-  value = local.ebs_need_permission
-}
-
-output "driver_enabled" {
-  value = local.ebs_driver_enabled
-}

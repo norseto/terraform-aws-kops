@@ -92,9 +92,5 @@ in the following way:
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Cluster name |
 | <a name="output_cluster_secrets"></a> [cluster\_secrets](#output\_cluster\_secrets) | Cluster secret values |
 | <a name="output_cmd"></a> [cmd](#output\_cmd) | Command to get config file |
-| <a name="output_driver_enabled"></a> [driver\_enabled](#output\_driver\_enabled) | n/a |
-| <a name="output_ebs_csi_driver"></a> [ebs\_csi\_driver](#output\_ebs\_csi\_driver) | n/a |
-| <a name="output_ebs_need_permission"></a> [ebs\_need\_permission](#output\_ebs\_need\_permission) | n/a |
 | <a name="output_ondemand_instance_count"></a> [ondemand\_instance\_count](#output\_ondemand\_instance\_count) | Instance count of least on-demand worker node instance |
 | <a name="output_revisions"></a> [revisions](#output\_revisions) | revision map for updater |
-| <a name="output_service_account_external_permissions"></a> [service\_account\_external\_permissions](#output\_service\_account\_external\_permissions) | n/a |

@@ -42,3 +42,6 @@ Common ServiceAccount IAM Policies
 
 ## v0.5.5
 - Remove debug outputs
+
+## v0.5.6
+- Fixed a bug that caused instance creation of non-burstable instance types to fail.

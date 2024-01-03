@@ -39,7 +39,7 @@ resource "kops_instance_group" "nodes" {
   max_price = each.value.max_price
 
   manager      = local.custom_manager ? title(each.value.manager) : ""
-  cpu_credits  = each.value.cpu_credits
+  cpu_credits  = module.node_machine_type[each.key].burstable ? each.value.cpu_credits : null
   machine_type = module.node_machine_type[each.key].machine_type
   image        = module.node_machine_image[each.key].image_full_name
 

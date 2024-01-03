@@ -12,7 +12,7 @@ data "aws_ec2_instance_types" "this" {
 
   filter {
     name   = "burstable-performance-supported"
-    values = ["true"]
+    values = local.burstables
   }
 
   filter {

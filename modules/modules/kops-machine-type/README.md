@@ -35,4 +35,5 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_burstable"></a> [burstable](#output\_burstable) | machine type for template is burstable or not |
 | <a name="output_machine_type"></a> [machine\_type](#output\_machine\_type) | machine type for template |

@@ -101,7 +101,8 @@ locals {
       etcd_name : "etcd-${s.name}-${ii}"
       zone : s.zone
       subnet : s.name
-      instance_group : "${s.name}-${ii}"
+      instance_group : format("%s-%d-%s", s.name, ii,
+        try(local.c_ondemands[i], local.alloc.on_demand_base) > 0 ? "od" : "sp")
       subnet_id : s.id
       on_demand_base : try(local.c_ondemands[i], local.alloc.on_demand_base)
       instances : coalescelist(try(local.c_config.instances[i], []), local.alloc.instances)

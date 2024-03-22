@@ -45,3 +45,7 @@ Common ServiceAccount IAM Policies
 
 ## v0.5.6
 - Fixed a bug that caused instance creation of non-burstable instance types to fail.
+
+## v0.5.7
+- Fixed a wrong validation error message.
+- Add lifecycle identity to instance group name of control plane.

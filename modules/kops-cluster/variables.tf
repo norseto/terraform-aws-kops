@@ -27,7 +27,7 @@ variable "dns_type" {
 variable "api_access" {
   description = "Kubernetes API access type(DNS or LoadBalancer)"
   type = object({
-    # type: dns or loadbalancer
+    # type: dns or load_balancer
     type = optional(string, "dns")
     # spec: loadbalancer spec
     spec = optional(object({
@@ -44,7 +44,7 @@ variable "api_access" {
 
   validation {
     condition     = contains(["dns", "load_balancer"], lower(var.api_access.type))
-    error_message = "api_access.type sholud be dns or loadbalancer"
+    error_message = "api_access.type sholud be dns or load_balancer"
   }
   validation {
     condition     = lower(var.api_access.type) == "dns" || contains(["public", "internal"], lower(var.api_access.spec.type))

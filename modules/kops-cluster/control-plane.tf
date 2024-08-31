@@ -19,7 +19,7 @@ resource "kops_instance_group" "control_planes" {
 
   cluster_name = kops_cluster.cluster.name
   name         = each.value.instance_group
-  role         = "Master"
+  role         = "ControlPlane"
   labels = {
     "kops.k8s.io/cluster" : kops_cluster.cluster.name
   }
@@ -46,7 +46,7 @@ resource "kops_instance_group" "control_planes" {
   additional_security_groups = local.c_additional_security_group_ids
 
   dynamic "additional_user_data" {
-    for_each = [for g in local.ssm_agents : g if g == "master"]
+    for_each = [for g in local.ssm_agents : g if g == "master" || g == "control-plane"]
     content {
       name    = "ssm-install.sh"
       type    = "text/x-shellscript"
@@ -58,10 +58,12 @@ resource "kops_instance_group" "control_planes" {
     }
   }
 
-  root_volume_type       = local.c_config.root_volume.volume_type
-  root_volume_iops       = local.c_config.root_volume.volume_iops
-  root_volume_throughput = local.c_config.root_volume.volume_throughput
-  root_volume_size       = local.c_config.root_volume.volume_size
+  root_volume {
+    type       = local.c_config.root_volume.volume_type
+    iops       = local.c_config.root_volume.volume_iops
+    throughput = local.c_config.root_volume.volume_throughput
+    size       = local.c_config.root_volume.volume_size
+  }
 
   lifecycle {
     ignore_changes = [labels]

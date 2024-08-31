@@ -4,13 +4,13 @@ Kubeconfig utility.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_kops"></a> [kops](#requirement\_kops) | ~> 1.25.0 |
+| <a name="requirement_kops"></a> [kops](#requirement\_kops) | ~> 1.29.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_kops"></a> [kops](#provider\_kops) | ~> 1.25.0 |
+| <a name="provider_kops"></a> [kops](#provider\_kops) | ~> 1.29.0 |
 
 ## Modules
 
@@ -20,7 +20,7 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [kops_kube_config.kube_config](https://registry.terraform.io/providers/eddycharly/kops/latest/docs/data-sources/kube_config) | data source |
+| [kops_kube_config.kube_config](https://registry.terraform.io/providers/terraform-kops/kops/latest/docs/data-sources/kube_config) | data source |
 
 ## Inputs
 

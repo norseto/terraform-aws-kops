@@ -15,15 +15,13 @@ resource "kops_cluster" "cluster" {
   name               = local.cluster_name
   kubernetes_version = try(local.eksd["kubernetesVersion"], local.kubernetes_version)
 
-  network_id   = local.vpc_id
-  network_cidr = local.vpc_cidr
-
   service_account_issuer_discovery {
     enable_aws_oidc_provider = true
     discovery_store          = local.discovery
   }
 
   api {
+    access = local.kubernetes_api_access
     dynamic "dns" {
       for_each = toset(lower(local.api_access.type) == "dns" ? ["a"] : [])
       content {}
@@ -42,18 +40,36 @@ resource "kops_cluster" "cluster" {
   }
 
   cloud_provider {
-    aws {}
+    aws {
+      pod_identity_webhook {
+        enabled = true
+      }
+      load_balancer_controller {
+        enabled = try(local.addons.load_balancer_controller.enabled, false)
+      }
+      ebs_csi_driver {
+        enabled = local.ebs_driver_enabled
+        managed = local.ebs_driver_enabled
+      }
+      node_termination_handler {
+        enabled                           = local.term_handler.enabled
+        enable_spot_interruption_draining = local.term_handler.enable_spot_interruption_draining
+        enable_scheduled_event_draining   = local.term_handler.enable_scheduled_event_draining
+        enable_rebalance_monitoring       = local.term_handler.enable_rebalance_monitoring
+        enable_rebalance_draining         = local.term_handler.enable_rebalance_draining
+        enable_prometheus_metrics         = local.term_handler.enable_prometheus_metrics
+        enable_sqs_termination_draining   = local.term_handler.enable_sqs_termination_draining
+        exclude_from_load_balancers       = local.term_handler.exclude_from_load_balancers
+        managed_asg_tag                   = local.term_handler.managed_asg_tag
+        memory_request                    = local.term_handler.memory_request
+        cpu_request                       = local.term_handler.cpu_request
+        version                           = local.term_handler.version
+      }
+    }
   }
 
   external_cloud_controller_manager {
     image = try(local.eksd["cloud-controller-manager-image"], "")
-  }
-
-  cloud_config {
-    aws_ebs_csi_driver {
-      enabled = local.ebs_driver_enabled
-      managed = local.ebs_driver_enabled
-    }
   }
 
   iam {
@@ -73,6 +89,28 @@ resource "kops_cluster" "cluster" {
   }
 
   networking {
+    network_id   = local.vpc_id
+    network_cidr = local.vpc_cidr
+
+    tag_subnets {
+      value = local.tag_subnets
+    }
+
+    topology {
+      dns = title(local.dns_type)
+    }
+
+    dynamic "subnet" {
+      for_each = local.cluster_subnets
+      content {
+        id   = subnet.value
+        name = local.subnet_data[subnet.value].name
+        zone = local.subnet_data[subnet.value].zone
+        type = title(local.subnet_data[subnet.value].type)
+        cidr = local.subnet_data[subnet.value].cidr
+      }
+    }
+
     dynamic "amazon_vpc" {
       for_each = setintersection([local.networking], ["amazon_vpc"])
       content {}
@@ -94,8 +132,7 @@ resource "kops_cluster" "cluster" {
     }
   }
 
-  ssh_access            = []
-  kubernetes_api_access = local.kubernetes_api_access
+  ssh_access = []
 
   kubelet {
     pod_infra_container_image = try(local.eksd["pause-image"], "")
@@ -124,7 +161,7 @@ resource "kops_cluster" "cluster" {
   kube_dns {
     core_dns_image = try(local.eksd["coredns-image"], "")
   }
-  master_kubelet {
+  control_plane_kubelet {
     pod_infra_container_image = try(local.eksd["pause-image"], "")
   }
 
@@ -144,47 +181,8 @@ resource "kops_cluster" "cluster" {
     }
   }
 
-  node_termination_handler {
-    enabled                           = local.term_handler.enabled
-    enable_spot_interruption_draining = local.term_handler.enable_spot_interruption_draining
-    enable_scheduled_event_draining   = local.term_handler.enable_scheduled_event_draining
-    enable_rebalance_monitoring       = local.term_handler.enable_rebalance_monitoring
-    enable_rebalance_draining         = local.term_handler.enable_rebalance_draining
-    enable_prometheus_metrics         = local.term_handler.enable_prometheus_metrics
-    enable_sqs_termination_draining   = local.term_handler.enable_sqs_termination_draining
-    exclude_from_load_balancers       = local.term_handler.exclude_from_load_balancers
-    managed_asg_tag                   = local.term_handler.managed_asg_tag
-    memory_request                    = local.term_handler.memory_request
-    cpu_request                       = local.term_handler.cpu_request
-    version                           = local.term_handler.version
-  }
-
   node_problem_detector {
     enabled = local.prob_detector
-  }
-
-  topology {
-    masters = lower(local.c_subnets[0].type)
-    nodes   = lower(local.n_subnets[0].type)
-
-    dns {
-      type = title(local.dns_type)
-    }
-  }
-
-  tag_subnets {
-    value = local.tag_subnets
-  }
-
-  dynamic "subnet" {
-    for_each = local.cluster_subnets
-    content {
-      provider_id = subnet.value
-      name        = local.subnet_data[subnet.value].name
-      zone        = local.subnet_data[subnet.value].zone
-      type        = title(local.subnet_data[subnet.value].type)
-      cidr        = local.subnet_data[subnet.value].cidr
-    }
   }
 
   # etcd clusters
@@ -238,12 +236,6 @@ resource "kops_cluster" "cluster" {
   cert_manager {
     managed = try(local.addons.cert_manager.enabled, true)
     enabled = true
-  }
-  pod_identity_webhook {
-    enabled = true
-  }
-  aws_load_balancer_controller {
-    enabled = try(local.addons.load_balancer_controller.enabled, false)
   }
   cluster_autoscaler {
     enabled                       = !local.karpenter && try(local.addons.cluster_autoscaler.enabled, false)

@@ -12,14 +12,14 @@ This module installes:
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | >= 2.9.0 |
-| <a name="requirement_kops"></a> [kops](#requirement\_kops) | ~> 1.25.0 |
+| <a name="requirement_kops"></a> [kops](#requirement\_kops) | ~> 1.29.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
-| <a name="provider_kops"></a> [kops](#provider\_kops) | ~> 1.25.0 |
+| <a name="provider_kops"></a> [kops](#provider\_kops) | ~> 1.29.0 |
 
 ## Modules
 
@@ -36,7 +36,7 @@ This module installes:
 | Name | Type |
 |------|------|
 | [aws_availability_zone.zone](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zone) | data source |
-| [kops_cluster.cluster](https://registry.terraform.io/providers/eddycharly/kops/latest/docs/data-sources/cluster) | data source |
+| [kops_cluster.cluster](https://registry.terraform.io/providers/terraform-kops/kops/latest/docs/data-sources/cluster) | data source |
 
 ## Inputs
 

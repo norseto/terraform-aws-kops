@@ -14,14 +14,14 @@ in the following way:
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_kops"></a> [kops](#requirement\_kops) | ~> 1.25.0 |
+| <a name="requirement_kops"></a> [kops](#requirement\_kops) | ~> 1.29.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
-| <a name="provider_kops"></a> [kops](#provider\_kops) | ~> 1.25.0 |
+| <a name="provider_kops"></a> [kops](#provider\_kops) | ~> 1.29.0 |
 
 ## Modules
 
@@ -38,9 +38,9 @@ in the following way:
 
 | Name | Type |
 |------|------|
-| [kops_cluster.cluster](https://registry.terraform.io/providers/eddycharly/kops/latest/docs/resources/cluster) | resource |
-| [kops_instance_group.control_planes](https://registry.terraform.io/providers/eddycharly/kops/latest/docs/resources/instance_group) | resource |
-| [kops_instance_group.nodes](https://registry.terraform.io/providers/eddycharly/kops/latest/docs/resources/instance_group) | resource |
+| [kops_cluster.cluster](https://registry.terraform.io/providers/terraform-kops/kops/latest/docs/resources/cluster) | resource |
+| [kops_instance_group.control_planes](https://registry.terraform.io/providers/terraform-kops/kops/latest/docs/resources/instance_group) | resource |
+| [kops_instance_group.nodes](https://registry.terraform.io/providers/terraform-kops/kops/latest/docs/resources/instance_group) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
 
@@ -51,7 +51,7 @@ in the following way:
 | <a name="input_additional_security_group_ids"></a> [additional\_security\_group\_ids](#input\_additional\_security\_group\_ids) | Additional security groups for nodes | `list(string)` | `[]` | no |
 | <a name="input_additional_users"></a> [additional\_users](#input\_additional\_users) | Additional users or roles | <pre>list(object({<br>    arn      = string<br>    username = string<br>    groups   = optional(list(string), ["system:masters"])<br>  }))</pre> | `[]` | no |
 | <a name="input_addons"></a> [addons](#input\_addons) | kOps managed addons to be installed | <pre>object({<br>    # CertManager always need to be installed because this module always set<br>    # `service_account_issuer_discovery`. So, if false, it should be installed by helm.<br>    # This is for testing cert-manager version testing purpose.<br>    cert_manager = optional(object(<br>      {<br>        enabled = optional(bool, true)<br>      }<br>    ), { enabled = true }),<br>    # LoadBalancerController - Managed LoadBalancerController needs tags on subnet,<br>    # so this module does not install by default.<br>    load_balancer_controller = optional(object(<br>      {<br>        # True will install addon with kOps<br>        enabled = optional(bool, false)<br>      }<br>    ), { enabled : false })<br>    # ClusterAutoscaler Configuration<br>    cluster_autoscaler = optional(object(<br>      {<br>        # True will install addon with kOps<br>        enabled = optional(bool, false)<br>        # Image<br>        image = optional(string, "")<br>        # Skip node with system pods<br>        skip_nodes_with_system_pods = optional(bool, true)<br>        # Skip node with local storage<br>        skip_nodes_with_local_storage = optional(bool, false)<br>      }<br>    ), { enabled : false })<br>  })</pre> | <pre>{<br>  "cluster_autoscaler": {<br>    "enabled": false<br>  },<br>  "load_balancer_controller": {<br>    "enabled": false<br>  }<br>}</pre> | no |
-| <a name="input_api_access"></a> [api\_access](#input\_api\_access) | Kubernetes API access type(DNS or LoadBalancer) | <pre>object({<br>    # type: dns or loadbalancer<br>    type = optional(string, "dns")<br>    # spec: loadbalancer spec<br>    spec = optional(object({<br>      # LoadBalancer type: Public or Internal<br>      type = optional(string, "Public")<br>      # LoadBalancer class: Network or Classic<br>      class = optional(string, "Network")<br>    }), { type : "Public", class : "Network" })<br>  })</pre> | <pre>{<br>  "spec": {},<br>  "type": "dns"<br>}</pre> | no |
+| <a name="input_api_access"></a> [api\_access](#input\_api\_access) | Kubernetes API access type(DNS or LoadBalancer) | <pre>object({<br>    # type: dns or load_balancer<br>    type = optional(string, "dns")<br>    # spec: loadbalancer spec<br>    spec = optional(object({<br>      # LoadBalancer type: Public or Internal<br>      type = optional(string, "Public")<br>      # LoadBalancer class: Network or Classic<br>      class = optional(string, "Network")<br>    }), { type : "Public", class : "Network" })<br>  })</pre> | <pre>{<br>  "spec": {},<br>  "type": "dns"<br>}</pre> | no |
 | <a name="input_aws_vpc_workaround"></a> [aws\_vpc\_workaround](#input\_aws\_vpc\_workaround) | amazon\_vpc workaround | `bool` | `true` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The name of the cluster | `string` | n/a | yes |
 | <a name="input_common_policy_installation"></a> [common\_policy\_installation](#input\_common\_policy\_installation) | Install common AWS policies for Kubernetes | <pre>object({<br>    load_balancer_controller = optional(bool, true)<br>    aws_for_fluent_bit       = optional(bool, true)<br>    efs_csi_controller       = optional(bool, true)<br>    cluster_autoscaler       = optional(bool, true)<br>  })</pre> | `{}` | no |

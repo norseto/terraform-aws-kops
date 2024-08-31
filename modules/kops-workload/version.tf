@@ -6,8 +6,8 @@ terraform {
       version = ">= 2.9.0"
     }
     kops = {
-      source  = "eddycharly/kops"
-      version = "~> 1.25.0"
+      source  = "terraform-kops/kops"
+      version = "~> 1.29.0"
     }
   }
 }

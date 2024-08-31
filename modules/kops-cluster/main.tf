@@ -15,6 +15,9 @@ resource "kops_cluster" "cluster" {
   name               = local.cluster_name
   kubernetes_version = try(local.eksd["kubernetesVersion"], local.kubernetes_version)
 
+  config_store {
+    base = local.config_base
+  }
   service_account_issuer_discovery {
     enable_aws_oidc_provider = true
     discovery_store          = local.discovery

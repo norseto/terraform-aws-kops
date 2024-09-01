@@ -208,32 +208,26 @@ variable "addons" {
     # CertManager always need to be installed because this module always set
     # `service_account_issuer_discovery`. So, if false, it should be installed by helm.
     # This is for testing cert-manager version testing purpose.
-    cert_manager = optional(object(
-      {
-        enabled = optional(bool, true)
-      }
-    ), { enabled = true }),
+    cert_manager = optional(object({
+      enabled = optional(bool, true)
+    }), { enabled = true }),
     # LoadBalancerController - Managed LoadBalancerController needs tags on subnet,
     # so this module does not install by default.
-    load_balancer_controller = optional(object(
-      {
-        # True will install addon with kOps
-        enabled = optional(bool, false)
-      }
-    ), { enabled : false })
+    load_balancer_controller = optional(object({
+      # True will install addon with kOps
+      enabled = optional(bool, false)
+    }), { enabled : false })
     # ClusterAutoscaler Configuration
-    cluster_autoscaler = optional(object(
-      {
-        # True will install addon with kOps
-        enabled = optional(bool, false)
-        # Image
-        image = optional(string, "")
-        # Skip node with system pods
-        skip_nodes_with_system_pods = optional(bool, true)
-        # Skip node with local storage
-        skip_nodes_with_local_storage = optional(bool, false)
-      }
-    ), { enabled : false })
+    cluster_autoscaler = optional(object({
+      # True will install addon with kOps
+      enabled = optional(bool, false)
+      # Image
+      image = optional(string, "")
+      # Skip node with system pods
+      skip_nodes_with_system_pods = optional(bool, true)
+      # Skip node with local storage
+      skip_nodes_with_local_storage = optional(bool, false)
+    }), { enabled : false })
   })
   default = {
     load_balancer_controller : { enabled : false }
@@ -365,8 +359,13 @@ variable "karpenter" {
 }
 
 variable "aws_vpc_workaround" {
-  description = "amazon_vpc workaround"
-  default     = true
+  description = <<EOM
+  if true, will use Ubuntu 20 instead of Ubuntu 22 or later.
+  See https://github.com/kubernetes/kops/issues/15720,
+  https://github.com/kubernetes/kops/pull/16313
+  (Already fixed on https://github.com/aws/amazon-vpc-cni-k8s/issues/2103)
+  EOM
+  default     = false
   type        = bool
 }
 
@@ -392,13 +391,11 @@ variable "machine_image" {
 # EBS-CSI-Driver
 variable "ebs_csi_driver" {
   description = "EBS-CSI-Driver configuration"
-  type = object(
-    {
-      # Use EBS-CSI-Driver
-      enabled = optional(bool, true)
-      # Self Managed EBS-CSI-Driver(Only setup IRSA)
-      self_managed = optional(bool, false)
-    }
-  )
+  type = object({
+    # Use EBS-CSI-Driver
+    enabled = optional(bool, true)
+    # Self Managed EBS-CSI-Driver(Only setup IRSA)
+    self_managed = optional(bool, false)
+  })
   default = {}
 }

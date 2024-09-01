@@ -27,7 +27,7 @@ resource "kops_instance_group" "nodes" {
   max_size = each.value.max_size
   mixed_instances_policy {
     instances                = each.value.instances
-    spot_allocation_strategy = try(each.value.spot_allocation_strategy, "lowest-price")
+    spot_allocation_strategy = try(each.value.spot_allocation_strategy, "price-capacity-optimized")
 
     on_demand_base {
       value = coalesce(each.value.on_demand_base, can(each.value.max_price) ? 0 : 1)

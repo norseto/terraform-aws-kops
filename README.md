@@ -2,9 +2,11 @@
 Terrafrom module for create Kubernetes cluster with kOps on AWS.
 
 # Kubernetes version Compatibility
-| Module Version | Suported Kubernetes Version |
+| Module Version | Tested Kubernetes Version |
 |---|---|
-|v0.5.0|1.22 - 1.26|
+|v0.5|1.22 - 1.26|
+|v0.6|1.29 - 1.30|
+
 
 # History
 ## v0.1.0
@@ -49,3 +51,6 @@ Common ServiceAccount IAM Policies
 ## v0.5.7
 - Fixed a wrong validation error message.
 - Add lifecycle identity to instance group name of control plane.
+
+## v0.6.0
+- Upgrade kOps provider version

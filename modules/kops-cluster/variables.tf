@@ -176,7 +176,7 @@ variable "discovery_store_id" {
 }
 
 variable "kubernetes_api_access" {
-  description = "SSH access CIDR"
+  description = "Control-Plane access CIDR"
   type        = list(string)
   default     = ["0.0.0.0/0"]
 }

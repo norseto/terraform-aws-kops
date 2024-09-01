@@ -128,7 +128,7 @@ locals {
   cluster_subnets    = setunion([for k, v in local.c_groups : v.subnet_id], local.n_subnet_ids, local.lb_subnets)
   state_store_id     = var.state_store_id
   config_base        = "s3://${local.state_store_id}/${local.cluster_name}"
-  kubernetes_version = var.kubernetes_version
+  kubernetes_version = try(reverse(split("/", local.eksd["kubernetesVersion"]))[0], var.kubernetes_version)
 
   addons = var.addons == null ? {} : var.addons
   addon_install = {

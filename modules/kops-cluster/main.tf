@@ -71,6 +71,8 @@ resource "kops_cluster" "cluster" {
     }
   }
 
+  cloud_config {}
+
   external_cloud_controller_manager {
     image = try(local.eksd["cloud-controller-manager-image"], "")
   }
@@ -258,7 +260,10 @@ resource "kops_cluster" "cluster" {
   lifecycle {
     ignore_changes = [
       secrets,
-      authentication[0].aws[0].identity_mappings[0]
+      authentication[0].aws[0].identity_mappings[0],
+      api[0].public_name,
+      etcd_cluster[0].manager,
+      etcd_cluster[1].manager,
     ]
   }
 }

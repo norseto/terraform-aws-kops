@@ -54,3 +54,6 @@ Common ServiceAccount IAM Policies
 
 ## v0.6.0
 - Upgrade kOps provider version
+
+## v0.6.1
+- Upgrade kOps provider version fix for workloads

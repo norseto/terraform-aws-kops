@@ -139,7 +139,6 @@ variable "control_plane_config" {
       cpu_credits              = optional(string, "standard")
       on_demand_base           = optional(number, 1)
       spot_allocation_strategy = optional(string, "price-capacity-optimized")
-      max_price                = optional(string, "0.99")
     }), {})
     # the number of control plane instance group in control_plane_subnet
     arrangement = optional(list(number), [1])
@@ -149,6 +148,7 @@ variable "control_plane_config" {
     # If empty, will use the same value as the control_plane_arrangement
     on_demand_base = optional(list(number), [])
     instances      = optional(list(list(string)), [])
+    max_prices     = optional(list(string), [])
     root_volume = optional(object({
       volume_type       = optional(string)
       volume_iops       = optional(number)

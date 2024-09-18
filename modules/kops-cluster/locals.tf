@@ -105,6 +105,7 @@ locals {
       try(local.c_ondemands[i], local.alloc.on_demand_base) > 0 ? "od" : "sp")
       subnet_id : s.id
       on_demand_base : try(local.c_ondemands[i], local.alloc.on_demand_base)
+      max_price : coalesce(try(local.c_config.max_prices[i], null), local.alloc.max_price)
       instances : coalescelist(try(local.c_config.instances[i], []), local.alloc.instances)
     }
     } if try(local.c_config.arrangement[i], 0) > 0

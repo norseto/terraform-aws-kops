@@ -40,7 +40,7 @@ resource "kops_instance_group" "control_planes" {
   }
   machine_type = module.cp_machine_type[each.key].machine_type
   image        = module.cp_machine_image[each.key].image_full_name
-  max_price    = local.alloc.max_price
+  max_price    = each.value.max_price
   cpu_credits  = module.cp_machine_type[each.key].burstable ? local.alloc.cpu_credits : null
 
   additional_security_groups = local.c_additional_security_group_ids

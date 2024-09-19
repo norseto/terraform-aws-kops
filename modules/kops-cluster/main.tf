@@ -52,7 +52,7 @@ resource "kops_cluster" "cluster" {
       }
       ebs_csi_driver {
         enabled = local.ebs_driver_enabled
-        managed = local.ebs_driver_enabled
+        managed = local.ebs_driver_managed
       }
       node_termination_handler {
         enabled                           = local.term_handler.enabled

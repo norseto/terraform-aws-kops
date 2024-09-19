@@ -135,7 +135,7 @@ variable "control_plane_config" {
     # applies to all control planes individually.
     default_allocation = optional(object({
       instances                = optional(list(string), ["t3a.medium", "t3.medium"])
-      max_price                = optional(string, "1.0")
+      max_price                = optional(string, "0.99")
       cpu_credits              = optional(string, "standard")
       on_demand_base           = optional(number, 1)
       spot_allocation_strategy = optional(string, "price-capacity-optimized")
@@ -394,8 +394,10 @@ variable "ebs_csi_driver" {
   type = object({
     # Use EBS-CSI-Driver
     enabled = optional(bool, true)
-    # Self Managed EBS-CSI-Driver(Only setup IRSA)
+    # Self Managed EBS-CSI-Driver(Only setup IRSA) - Deprecated
     self_managed = optional(bool, false)
+    # kOps Managed EBS-CSI-Driver(Needs IRSA)
+    managed = optional(bool, true)
   })
   default = {}
 }

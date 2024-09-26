@@ -105,6 +105,7 @@ locals {
       try(local.c_ondemands[i], local.alloc.on_demand_base) > 0 ? "od" : "sp")
       subnet_id : s.id
       on_demand_base : try(local.c_ondemands[i], local.alloc.on_demand_base)
+      max_price : coalesce(try(local.c_config.max_prices[i], null), local.alloc.max_price)
       instances : coalescelist(try(local.c_config.instances[i], []), local.alloc.instances)
     }
     } if try(local.c_config.arrangement[i], 0) > 0
@@ -159,9 +160,10 @@ locals {
 
   # EBS-CSI-Driver config
   ebs_csi            = var.ebs_csi_driver
-  ebs_driver_enabled = (local.ebs_csi.enabled && (!local.ebs_csi.self_managed))
+  ebs_driver_managed = !local.ebs_csi.self_managed && local.ebs_csi.managed
+  ebs_driver_enabled = local.ebs_csi.enabled
   # When enabled but not kOps managed, we need to add permission.
-  ebs_need_permission = local.ebs_csi.enabled && local.ebs_csi.self_managed
+  ebs_need_permission = local.ebs_driver_enabled && !local.ebs_driver_managed
   ebs_sa_permission = {
     name : "ebs-csi-controller-sa"
     namespace : "kube-system"

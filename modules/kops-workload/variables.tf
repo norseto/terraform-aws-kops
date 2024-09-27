@@ -6,12 +6,14 @@ variable "cluster_name" {
 variable "installation" {
   description = "Workload configurations to install"
   type = object({
+    # Self-Managed Cert-Manager
     # Cert-Manager will be installed when cert-manager add-on is not present.
     cert_manager = optional(object({
       # Chart version
       version = optional(string, "")
       set     = optional(map(string), {})
     }), {})
+    # Self-Managed LoadBalancerController
     # LoadBalancerController will not be installed when add-on is present.
     load_balancer_controller = optional(object({
       install = optional(bool, true)
@@ -37,10 +39,6 @@ variable "installation" {
       # Chart version
       version = optional(string, "")
       set     = optional(map(string), {})
-    }), {})
-    patch_autoscaler = optional(object({
-      # Patches spot-worker node affinity to control-plane
-      install = optional(bool, false)
     }), {})
   })
   default = {}

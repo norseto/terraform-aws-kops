@@ -7,6 +7,6 @@ module "common_sa_policies" {
   policies = {
     for k, p in local.common_policies : replace(k, "_", "-") => merge(p,
     { policy : templatefile(p.template, { cluster_name : local.cluster_name }) })
-    if !try(local.addon_install[p.override], false) && var.common_policy_installation[k]
+    if !try(local.addon_install[p.override], false) && var.common_policy_installation[k] && can(p.template)
   }
 }

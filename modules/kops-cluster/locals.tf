@@ -133,7 +133,7 @@ locals {
 
   addons = var.addons == null ? {} : var.addons
   addon_install = {
-    for a in keys(local.addons) : a => local.addons[a].enabled
+    for a in keys(local.addons) : a => try(local.addons[a].managed, try(local.addons[a].enabled, true))
   }
 
   # Common ServiceAccount Policies
@@ -155,28 +155,33 @@ locals {
       name : "cluster-autoscaler"
       template : "${path.module}/templates/cluster-autoscaler.json.tftpl"
       override : "cluster_autoscaler"
+    },
+    ebs_csi_driver : {
+      name : "ebs-csi-controller"
+      policy_arns : ["arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"]
+      override : "ebs_csi_driver"
     }
   }
 
   # EBS-CSI-Driver config
-  ebs_csi            = var.ebs_csi_driver
-  ebs_driver_managed = !local.ebs_csi.self_managed && local.ebs_csi.managed
-  ebs_driver_enabled = local.ebs_csi.enabled
-  # When enabled but not kOps managed, we need to add permission.
-  ebs_need_permission = local.ebs_driver_enabled && !local.ebs_driver_managed
-  ebs_sa_permission = {
-    name : "ebs-csi-controller-sa"
-    namespace : "kube-system"
-    policy_arns : ["arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"]
-  }
+  ebs_csi            = local.addons.ebs_csi_driver
+  ebs_driver_managed = local.ebs_csi.managed
+  ebs_driver_enabled = true
 
   # IRSA
   discovery_store_id = coalesce(var.discovery_store_id, var.state_store_id)
   discovery_key      = local.state_store_id == local.discovery_store_id ? "${local.cluster_name}/discovery" : local.cluster_name
   discovery          = "s3://${local.discovery_store_id}/${local.discovery_key}"
+  common_addon_permissions = [
+    for p in local.common_policies : {
+      name : "${p.name}-sa"
+      namespace : "kube-system"
+      policy_arns : p.policy_arns
+    } if !try(local.addon_install[p.override], false) && can(p.policy_arns)
+  ]
+
   service_account_external_permissions = {
-    for p in concat(var.service_account_external_permissions, module.common_sa_policies.policy_list,
-    local.ebs_need_permission ? [local.ebs_sa_permission] : []) :
+    for p in concat(var.service_account_external_permissions, module.common_sa_policies.policy_list, local.common_addon_permissions) :
     "${p.namespace}::${p.name}" => {
       name : p.name
       namespace : p.namespace

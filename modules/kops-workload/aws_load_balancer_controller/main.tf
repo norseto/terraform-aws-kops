@@ -21,25 +21,18 @@ resource "helm_release" "this" {
   }
 
   dynamic "set" {
+    for_each = length(local.region) > 0 ? [local.region] : []
+    content {
+      name  = "region"
+      value = set.value
+    }
+  }
+
+  dynamic "set" {
     for_each = local.set_values
     content {
       name  = set.key
       value = set.value
     }
   }
-
-  # depends_on = [
-  #   helm_release.crd
-  # ]
 }
-
-# resource "helm_release" "crd" {
-#   count = local.create ? 1 : 0
-
-#   name      = "aws-load-balancer-controller-crds"
-#   namespace = "kube-system"
-
-#   repository = "https://snowplow-devops.github.io/helm-charts"
-#   chart      = "aws-load-balancer-controller-crds"
-#   # version    = local.chart_version
-# }

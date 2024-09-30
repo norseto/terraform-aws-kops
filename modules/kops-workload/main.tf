@@ -2,10 +2,11 @@
  * Set up common workloads for kOps cluster.
  *
  * This module installes:
- * - cert-manager (When kOps does not install managed cert-manager)
- * - aws-load-balancer-controller (When kOps manager cert-manager is not installed)
+ * - cert-manager (Self-Managed)
+ * - aws-load-balancer-controller (Self-Managed)
  * - aws-for-fluent-bit
  * - efs-csi-driver
+ * - ebs-csi-driver (Self-Managed)
  */
 
 module "cert_manager" {
@@ -21,6 +22,7 @@ module "load_balancer_controller" {
 
   create        = !local.managed_load_balancer_controller && local.install.load_balancer_controller.install
   cluster_name  = local.cluster_name
+  region        = local.region
   vpc_id        = local.vpc_id
   chart_version = local.install.load_balancer_controller.version
   set_values    = local.install.load_balancer_controller.set
@@ -35,6 +37,17 @@ module "efs_csi_driver" {
   region        = local.region
   chart_version = local.install.efs_csi_driver.version
   set_values    = local.install.efs_csi_driver.set
+
+  depends_on = [module.cert_manager]
+}
+
+module "ebs_csi_driver" {
+  source = "./ebs_csi_driver"
+
+  create        = !local.managed_ebs_csi_driver && local.install.ebs_csi_driver.install
+  region        = local.region
+  chart_version = local.install.ebs_csi_driver.version
+  set_values    = local.install.ebs_csi_driver.set
 
   depends_on = [module.cert_manager]
 }

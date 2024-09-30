@@ -53,7 +53,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_discovery_name"></a> [discovery\_name](#input\_discovery\_name) | Name for OIDC storage. | `string` | `""` | no |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | value | `string` | `""` | no |
-| <a name="input_state_name"></a> [state\_name](#input\_state\_name) | Name for state storage. Actually, prefix and account ID<br>    and region name will be added. | `string` | n/a | yes |
+| <a name="input_state_name"></a> [state\_name](#input\_state\_name) | Name for state storage. Actually, prefix and account ID<br/>    and region name will be added. | `string` | n/a | yes |
 | <a name="input_state_suffix"></a> [state\_suffix](#input\_state\_suffix) | OIDC bucket name suffix type. full, region, account\_id or none. | `string` | `"full"` | no |
 
 ## Outputs

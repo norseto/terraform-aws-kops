@@ -210,7 +210,8 @@ variable "addons" {
     # This is for testing cert-manager version testing purpose.
     cert_manager = optional(object({
       enabled = optional(bool, true)
-    }), { enabled = true }),
+      managed = optional(bool, true)
+    }), { enabled : true, managede : true }),
     # LoadBalancerController - Managed LoadBalancerController needs tags on subnet,
     # so this module does not install by default.
     load_balancer_controller = optional(object({
@@ -227,12 +228,13 @@ variable "addons" {
       skip_nodes_with_system_pods = optional(bool, true)
       # Skip node with local storage
       skip_nodes_with_local_storage = optional(bool, false)
-    }), { enabled : false })
+    }), { enabled : false }),
+    ebs_csi_driver = optional(object({
+      # kOps Managed EBS-CSI-Driver(Needs IRSA)
+      managed = optional(bool, true)
+    }), { managed : true })
   })
-  default = {
-    load_balancer_controller : { enabled : false }
-    cluster_autoscaler : { enabled : false }
-  }
+  default = {}
 }
 
 variable "tag_subnets" {
@@ -337,6 +339,7 @@ variable "common_policy_installation" {
     aws_for_fluent_bit       = optional(bool, true)
     efs_csi_controller       = optional(bool, true)
     cluster_autoscaler       = optional(bool, true)
+    ebs_csi_driver           = optional(bool, true)
   })
   default = {}
 }
@@ -384,20 +387,6 @@ variable "machine_image" {
   type = object({
     owners = optional(list(string), [])
     filter = optional(string, "")
-  })
-  default = {}
-}
-
-# EBS-CSI-Driver
-variable "ebs_csi_driver" {
-  description = "EBS-CSI-Driver configuration"
-  type = object({
-    # Use EBS-CSI-Driver
-    enabled = optional(bool, true)
-    # Self Managed EBS-CSI-Driver(Only setup IRSA) - Deprecated
-    self_managed = optional(bool, false)
-    # kOps Managed EBS-CSI-Driver(Needs IRSA)
-    managed = optional(bool, true)
   })
   default = {}
 }

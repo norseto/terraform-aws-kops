@@ -1,13 +1,3 @@
-variable "vpc_id" {
-  description = "VPC ID"
-  type        = string
-}
-
-variable "cluster_name" {
-  description = "The name of the cluster"
-  type        = string
-}
-
 variable "chart_version" {
   description = "helm chart version"
   type        = string
@@ -20,14 +10,14 @@ variable "create" {
   default     = false
 }
 
+variable "region" {
+  description = "AWS image region"
+  type        = string
+  default     = ""
+}
+
 variable "set_values" {
   description = "Additional set values"
   type        = map(string)
   default     = {}
-}
-
-variable "region" {
-  description = "AWS region"
-  type        = string
-  default     = ""
 }

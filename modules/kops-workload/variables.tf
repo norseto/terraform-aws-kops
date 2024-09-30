@@ -40,12 +40,12 @@ variable "installation" {
       version = optional(string, "")
       set     = optional(map(string), {})
     }), {})
+    ebs_csi_driver = optional(object({
+      install = optional(bool, true)
+      # Chart version
+      version = optional(string, "")
+      set     = optional(map(string), {})
+    }), {})
   })
   default = {}
-}
-
-variable "kubeconfig_raw" {
-  description = "Kubeconfig raw content."
-  type        = string
-  default     = ""
 }

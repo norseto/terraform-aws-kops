@@ -30,7 +30,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_instance_types"></a> [instance\_types](#input\_instance\_types) | list of instance type. | `list(string)` | `[]` | no |
 | <a name="input_name_filter"></a> [name\_filter](#input\_name\_filter) | AMI name filter | `string` | `""` | no |
-| <a name="input_owners"></a> [owners](#input\_owners) | AMI owners | `list(string)` | <pre>[<br>  "099720109477"<br>]</pre> | no |
+| <a name="input_owners"></a> [owners](#input\_owners) | AMI owners | `list(string)` | <pre>[<br/>  "099720109477"<br/>]</pre> | no |
 
 ## Outputs
 

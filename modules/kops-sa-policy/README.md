@@ -26,11 +26,11 @@ No resources.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The name of cluster | `string` | n/a | yes |
-| <a name="input_policies"></a> [policies](#input\_policies) | policies to create | <pre>map(object({<br>    # IRSA ServiceAccountName<br>    name = string<br>    # IRSA ServiceAccount Namespace<br>    namespace = optional(string, "kube-system")<br>    # IAM Policy JSON string<br>    policy = string<br>    # If this entry overrides addon ServiceAccount, specify addon name<br>    override = optional(string, "")<br>  }))</pre> | `{}` | no |
+| <a name="input_policies"></a> [policies](#input\_policies) | policies to create | <pre>map(object({<br/>    # IRSA ServiceAccountName<br/>    name = string<br/>    # IRSA ServiceAccount Namespace<br/>    namespace = optional(string, "kube-system")<br/>    # IAM Policy JSON string<br/>    policy = string<br/>    # If this entry overrides addon ServiceAccount, specify addon name<br/>    override = optional(string, "")<br/>  }))</pre> | `{}` | no |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | The prefix of name of the cluster | `string` | `""` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_policy_list"></a> [policy\_list](#output\_policy\_list) | list of policies created. Can be userd as value of<br>    service\_account\_external\_permissions parameter of kops-cluster |
+| <a name="output_policy_list"></a> [policy\_list](#output\_policy\_list) | list of policies created. Can be userd as value of<br/>    service\_account\_external\_permissions parameter of kops-cluster |

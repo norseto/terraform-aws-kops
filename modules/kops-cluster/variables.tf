@@ -130,6 +130,8 @@ variable "load_balancer_subnet_filter" {
 variable "control_plane_config" {
   description = "Control plane configurations"
   type = object({
+    # maxPods set 0 to default
+    max_pods = optional(number, 110)
     # Control plane allocation configuration.
     # One Autoscaling Group is created per control plane, so this setting
     # applies to all control planes individually.
@@ -251,6 +253,7 @@ variable "nodes" {
     manager                       = optional(string, "")
     min_size                      = optional(number, 1)
     max_size                      = optional(number, 3)
+    max_pods                      = optional(number, null)
     instances                     = optional(list(string), ["t3a.medium", "t3.medium"])
     max_price                     = optional(string, "1.0")
     cpu_credits                   = optional(string, "standard")
@@ -305,6 +308,12 @@ variable "additional_users" {
     groups   = optional(list(string), ["system:masters"])
   }))
   default = []
+}
+
+variable "default_max_pods" {
+  description = "defailt max pods for nodes"
+  type        = number
+  default     = 110
 }
 
 variable "node_termination_handler" {
@@ -380,6 +389,17 @@ variable "networking" {
     condition     = contains(["amazon_vpc", "calico", "cilium", "canal"], lower(var.networking))
     error_message = "networking should be one of 'amazon_vpc', 'calico', 'cilium' or 'canal'"
   }
+}
+
+variable "networking_options" {
+  description = "Networking driver options"
+  type = object({
+    amazon_vpc = optional(object({
+      env            = optional(map(string), {})
+      prefix_enabled = optional(bool, true)
+    }), {})
+  })
+  default = {}
 }
 
 variable "machine_image" {

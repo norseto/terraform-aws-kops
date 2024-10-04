@@ -51,6 +51,14 @@ resource "kops_instance_group" "nodes" {
   node_labels = merge(try(each.value.node_labels, {}),
   { "kops.k8s.io/instancegroup" : each.key })
 
+  kubelet {
+    max_pods                  = each.value.max_pods
+    pod_infra_container_image = try(local.eksd["pause-image"], "")
+    anonymous_auth {
+      value = false
+    }
+  }
+
   dynamic "additional_user_data" {
     for_each = tolist([for g in local.ssm_agents : g if g == "node"])
     content {
@@ -72,7 +80,7 @@ resource "kops_instance_group" "nodes" {
   }
 
   lifecycle {
-    ignore_changes = [labels]
+    ignore_changes = [labels, kubelet[0].node_labels]
   }
   depends_on = [kops_cluster.cluster]
 }

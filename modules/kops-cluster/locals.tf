@@ -5,6 +5,9 @@ locals {
   dns_type     = lower(var.dns_type)
   api_access   = var.api_access
 
+  networking_options = var.networking_options
+  default_max_pods   = var.default_max_pods
+
   # Control Plane Config
   c_config = var.control_plane_config
 
@@ -221,4 +224,12 @@ locals {
 
   image_filter = try(coalesce(var.machine_image.filter, local.image_map[local.networking]), "")
   image_owners = var.machine_image.owners
+
+  # AWS VPC CNI
+  prefix_env = {
+    ENABLE_PREFIX_DELEGATION : "true"
+    WARM_PREFIX_TARGET : "1"
+  }
+  aws_vpc_opts = local.networking_options.amazon_vpc
+  aws_vpc_env  = merge(local.aws_vpc_opts.env, local.aws_vpc_opts.prefix_enabled ? local.prefix_env : {})
 }

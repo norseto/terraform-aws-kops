@@ -118,7 +118,15 @@ resource "kops_cluster" "cluster" {
 
     dynamic "amazon_vpc" {
       for_each = setintersection([local.networking], ["amazon_vpc"])
-      content {}
+      content {
+        dynamic "env" {
+          for_each = local.aws_vpc_env
+          content {
+            name  = env.key
+            value = env.value
+          }
+        }
+      }
     }
     dynamic "cilium" {
       for_each = setintersection([local.networking], ["cilium"])
@@ -140,6 +148,7 @@ resource "kops_cluster" "cluster" {
   ssh_access = []
 
   kubelet {
+    max_pods                  = local.default_max_pods
     pod_infra_container_image = try(local.eksd["pause-image"], "")
     anonymous_auth {
       value = false
@@ -168,6 +177,7 @@ resource "kops_cluster" "cluster" {
   }
   control_plane_kubelet {
     pod_infra_container_image = try(local.eksd["pause-image"], "")
+    max_pods                  = local.c_config.max_pods
   }
 
   authentication {

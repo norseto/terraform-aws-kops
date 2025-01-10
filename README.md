@@ -57,3 +57,7 @@ Common ServiceAccount IAM Policies
 
 ## v0.6.1
 - Upgrade kOps provider version fix for workloads
+
+## v0.6.2
+- Upgrade kOps provider version
+- Add prefix_enabling and max pods options

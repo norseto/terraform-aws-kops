@@ -34,8 +34,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "kops_state" {
 resource "aws_s3_bucket_acl" "kops_state" {
   bucket = aws_s3_bucket.kops_state.id
   depends_on = [
-    aws_s3_bucket_ownership_controls.kops_state,
-    aws_s3_bucket_public_access_block.kops_state
+    aws_s3_bucket_ownership_controls.kops_state
   ]
   acl = "private"
 }
@@ -43,8 +42,11 @@ resource "aws_s3_bucket_acl" "kops_state" {
 resource "aws_s3_bucket_ownership_controls" "kops_state" {
   bucket = aws_s3_bucket.kops_state.id
   rule {
-    object_ownership = "ObjectWriter"
+    object_ownership = "BucketOwnerPreferred"
   }
+  depends_on = [
+    aws_s3_bucket_public_access_block.kops_state
+  ]
 }
 
 resource "aws_s3_bucket_public_access_block" "kops_state" {

@@ -31,3 +31,8 @@ output "cluster_secrets" {
   value       = kops_cluster.cluster.secrets
   sensitive   = true
 }
+
+output "kubernetes_version" {
+  description = "Kubernetes version"
+  value       = local.kubernetes_version
+}

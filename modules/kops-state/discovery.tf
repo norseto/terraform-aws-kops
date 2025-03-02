@@ -22,18 +22,21 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "s3_bucket_discove
 
 resource "aws_s3_bucket_acl" "s3_bucket_discovery" {
   bucket = aws_s3_bucket.s3_bucket_discovery.id
+  acl    = "private"
+
   depends_on = [
-    aws_s3_bucket_ownership_controls.s3_bucket_discovery,
-    aws_s3_bucket_public_access_block.s3_bucket_discovery
+    aws_s3_bucket_ownership_controls.s3_bucket_discovery
   ]
-  acl = "private"
 }
 
 resource "aws_s3_bucket_ownership_controls" "s3_bucket_discovery" {
   bucket = aws_s3_bucket.s3_bucket_discovery.id
   rule {
-    object_ownership = "ObjectWriter"
+    object_ownership = "BucketOwnerPreferred"
   }
+  depends_on = [
+    aws_s3_bucket_public_access_block.s3_bucket_discovery
+  ]
 }
 
 resource "aws_s3_bucket_public_access_block" "s3_bucket_discovery" {
